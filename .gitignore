@@ -1,0 +1,6 @@
+.env
+.venv
+.idea
+test.py
+Myfin.db
+__pycache__/
