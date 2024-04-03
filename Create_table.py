@@ -61,4 +61,3 @@ def create_user() -> None:
         db.Column('Пользователь', db.String)
     )
     metadata.create_all(engine)
-    add_new_user()
