@@ -29,10 +29,15 @@ KEYS = ['Категория', 'Пользователь', 'Сумма', 'Ком�
 USERS = [value[0] for value in db.get_users()]
 
 
-async def add(update: Update, _) -> int:
+async def add(update: Update, context) -> int:
     """Вызывает клавиатуру для выбора категории"""
     if not check_user(update):
         return
+
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+
+    await context.bot.delete_message(user_id, message_id)
 
     reply_keyboard: list[list] = [[values[1]] for values in db.get_categories()]
     markup_key: ReplyKeyboardMarkup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -45,30 +50,42 @@ async def add(update: Update, _) -> int:
 async def set_category(update: Update, context) -> int:
     """Обрабатывает выбор категории и перводит на этап ввода стоимости"""
     context.user_data['Категория'] = update.message.text
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
 
     # Проверка на то, что категория есть в базе данных
     categories_names = [values[1] for values in db.get_categories()]
+
     if update.message.text in categories_names:
         context.user_data['Пользователь']: int = update.message.from_user.id
         text: str = 'Введите сумму'
         await update.message.reply_text(text)
+        await context.bot.delete_message(user_id, message_id)
+        await context.bot.delete_message(user_id, message_id - 1)
         return PRICE
     else:
-        text = 'Категории нет в списке!'
-        await update.message.reply_text(text)
+        await context.bot.delete_message(user_id, message_id - 1)
         await add(update, context)
 
 
 async def set_price(update: Update, context) -> int:
     """Получает сумму, записывает в контекст, переводит на комментарий"""
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+
     try:
         context.user_data['Сумма']: float = float(update.message.text)
         text: str = 'Введите комментарий или /skip, для пропуска'
         await update.message.reply_text(text)
+        await context.bot.delete_message(user_id, message_id)
+        await context.bot.delete_message(user_id, message_id - 1)
+
         return COMMENT
     except Exception:
         text: str = 'Сумма должна быть цифрой!'
         await update.message.reply_text(text)
+        await context.bot.delete_message(user_id, message_id)
+        await context.bot.delete_message(user_id, message_id - 1)
 
 
 async def set_comment(update: Update, context):
@@ -99,6 +116,11 @@ async def save(update: Update, context):
     user_id: int = context.user_data['Пользователь']
     db.set_message_id(user_id, message_id)
 
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    await context.bot.delete_message(user_id, message_id)
+    await context.bot.delete_message(user_id, message_id - 1)
+
     for key in KEYS:
         context.user_data[key] = None
     return ConversationHandler.END
@@ -108,8 +130,10 @@ async def end_add(update: Update, context):
     """Принудительно заканчивает диалог"""
     for key in KEYS:
         context.user_data[key] = None
-    text = 'Изменения не сохранены'
-    await update.message.reply_text(text=text, reply_markup=ReplyKeyboardRemove())
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    await context.bot.delete_message(user_id, message_id)
+    await context.bot.delete_message(user_id, message_id - 1)
     return ConversationHandler.END
 
 
@@ -237,6 +261,9 @@ async def get_report(update: Update, context) -> None:
     # Если сообщение уже создано, то редактируем
     try:
         await update.message.reply_text(text=text, reply_markup=keyboard)
+        user_id = update.message.from_user.id
+        message_id = update.message.message_id
+        await context.bot.delete_message(user_id, message_id)
     except Exception:
         query: CallbackQuery = update.callback_query
         await context.bot.edit_message_text(
@@ -369,3 +396,11 @@ def check_user(update: Update) -> bool:
         user_id = update.callback_query.message.chat.id
 
     return user_id in USERS
+
+
+async def delete_user_message(update: Update, context) -> None:
+    """Удаляет сообщение пользователя"""
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    if user_id in USERS:
+        await context.bot.delete_message(user_id, message_id)

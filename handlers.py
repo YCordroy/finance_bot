@@ -28,5 +28,6 @@ handlers = [
     CallbackQueryHandler(func.report_get_user, 'report_get_users'),
     CallbackQueryHandler(func.report_select_user, r'get_user_(\d+|all)'),
     CallbackQueryHandler(func.report_get_report, 'report_get_report'),
-    CallbackQueryHandler(func.report_stop_report, 'stop_report')
+    CallbackQueryHandler(func.report_stop_report, 'stop_report'),
+    MessageHandler(filters.ALL, func.delete_user_message)
 ]

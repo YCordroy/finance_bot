@@ -29,7 +29,7 @@ def insert_payments(context) -> None:
         date('now'),
         (select max(Ключ) from Категория where Название = '{context.user_data['Категория']}'), 
         {context.user_data['Сумма']},
-        '{context.user_data.get('Комментарий', None)}',
+        '{context.user_data.get('Комментарий', '')}',
         {context.user_data['Пользователь']}
         )
     '''
@@ -138,14 +138,14 @@ def change_date(user_id: int, message_id: int, new_date) -> None:
     execute_no_return(sql)
 
 
-def add_new_user():
+def add_new_user(user_id: int, user_name: str):
     """Записывает нового пользователя в таблицу Пользователь"""
     sql = f'''
     insert into Пользователь ([User id], Пользователь)
     values
     (
-    id пользователя,
-    'имя пользователя'
+    {user_id},
+    '{user_name}'
     )
     '''
     execute_no_return(sql)
