@@ -1,4 +1,4 @@
-from datab import db, metadata, engine, add_new_user
+from datab import db, metadata, engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 

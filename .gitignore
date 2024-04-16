@@ -1,6 +1,6 @@
-.env
+workdir/.env
+workdir/Myfin.db
 .venv
 .idea
 test.py
-Myfin.db
 __pycache__/

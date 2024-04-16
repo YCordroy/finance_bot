@@ -1,4 +1,5 @@
 import re
+import time
 from io import BytesIO
 from datetime import date, datetime
 import locale
@@ -22,11 +23,11 @@ from Keyboards import (
     report_keyboard
 )
 import datab as db
+from main import USERS
 
 locale.setlocale(locale.LC_ALL, 'ru_RU')
 CATEGORY, PRICE, COMMENT = range(3)
 KEYS = ['Категория', 'Пользователь', 'Сумма', 'Комментарий']
-USERS = [value[0] for value in db.get_users()]
 
 
 async def add(update: Update, context) -> int:

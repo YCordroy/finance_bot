@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from datetime import datetime, date
 from copy import deepcopy
 
-engine = db.create_engine('sqlite:///Myfin.db')
+engine = db.create_engine('sqlite:///workdir/Myfin.db')
 conn = engine.connect()
 metadata = db.MetaData()
 
