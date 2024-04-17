@@ -4,4 +4,3 @@ workdir/Myfin.db
 .idea
 test.py
 __pycache__/
-dockerfile

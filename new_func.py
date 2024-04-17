@@ -25,7 +25,7 @@ from Keyboards import (
 import datab as db
 from main import USERS
 
-locale.setlocale(locale.LC_ALL, 'ru_RU')
+locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 CATEGORY, PRICE, COMMENT = range(3)
 KEYS = ['Категория', 'Пользователь', 'Сумма', 'Комментарий']
 
