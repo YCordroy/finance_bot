@@ -124,7 +124,7 @@ async def save(update: Update, context):
 
     for key in KEYS:
         context.user_data[key] = None
-        del context.user_data['Комментарий']
+    del context.user_data['Комментарий']
     return ConversationHandler.END
 
 
