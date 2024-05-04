@@ -132,6 +132,8 @@ async def end_add(update: Update, context):
     """Принудительно заканчивает диалог"""
     for key in KEYS:
         context.user_data[key] = None
+    del context.user_data['Комментарий']
+
     user_id = update.message.from_user.id
     message_id = update.message.message_id
     await context.bot.delete_message(user_id, message_id)
