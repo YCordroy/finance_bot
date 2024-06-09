@@ -1,13 +1,18 @@
-from telegram.ext import CommandHandler, CallbackQueryHandler, ConversationHandler, MessageHandler, filters
+from telegram.ext import (
+    CommandHandler,
+    CallbackQueryHandler,
+    ConversationHandler,
+    MessageHandler,
+    filters
+)
 
-import new_func as func
+import Functions as func
 
 handlers = [
     ConversationHandler(
-        entry_points=[CommandHandler('add', func.add)],
+        entry_points=[MessageHandler(filters.ALL, func.add)],
         states={
             func.CATEGORY: [MessageHandler(~filters.COMMAND, func.set_category)],
-            func.PRICE: [MessageHandler(~filters.COMMAND, func.set_price)],
             func.COMMENT: [
                 MessageHandler(~filters.COMMAND, func.set_comment),
                 CommandHandler('skip', func.save)
@@ -29,5 +34,4 @@ handlers = [
     CallbackQueryHandler(func.report_select_user, r'get_user_(\d+|all)'),
     CallbackQueryHandler(func.report_get_report, 'report_get_report'),
     CallbackQueryHandler(func.report_stop_report, 'stop_report'),
-    MessageHandler(filters.ALL, func.delete_user_message)
 ]

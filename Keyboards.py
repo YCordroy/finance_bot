@@ -2,7 +2,7 @@ from calendar import Calendar
 from datetime import datetime, date
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from datab import get_users
+from DataBase import get_users
 
 
 def inline_month_calendar(month: int, year: int) -> InlineKeyboardMarkup:
@@ -62,7 +62,7 @@ def buttons_for_change() -> InlineKeyboardMarkup:
             InlineKeyboardButton('Изменить дату', callback_data=f'change_date_{date_now.month}_{date_now.year}')
         ],
         [
-            InlineKeyboardButton('Удалить сообщение', callback_data='delete_message'),
+            InlineKeyboardButton('Удалить запись', callback_data='delete_message'),
         ]
     ]
     return InlineKeyboardMarkup(keyboard)
@@ -89,7 +89,7 @@ def report_month_calendar(month: int, year: int, start_date=False) -> InlineKeyb
         12: 'Декабрь'
     }
 
-    keyboard: list[list] = []
+    keyboard: list = []
     keyboard.append([InlineKeyboardButton(text=weekday, callback_data=ignored_cb) for weekday in weekdays])
 
     for week in weeks:

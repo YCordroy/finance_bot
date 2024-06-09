@@ -1,12 +1,9 @@
 import re
-import time
 from io import BytesIO
 from datetime import date, datetime
-import locale
 
 from pandas import DataFrame
 from telegram import (
-    ReplyKeyboardRemove,
     ReplyKeyboardMarkup,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -22,13 +19,12 @@ from Keyboards import (
     change_user,
     report_keyboard
 )
-import datab as db
-from main import USERS
+import DataBase as db
+from Settings import KEYS
 
-locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
-CATEGORY, PRICE, COMMENT = range(3)
-KEYS = ['Категория', 'Пользователь', 'Сумма', 'Комментарий']
-
+CATEGORY, COMMENT = range(2)
+USERS = [user[0] for user in db.get_users()]
+# Список пользователей для доступа к боту
 
 async def add(update: Update, context) -> int:
     """Вызывает клавиатуру для выбора категории"""
@@ -39,7 +35,10 @@ async def add(update: Update, context) -> int:
     message_id = update.message.message_id
 
     await context.bot.delete_message(user_id, message_id)
-
+    try:
+        context.user_data['Сумма'] = float(update.message.text)
+    except ValueError:
+        return
     reply_keyboard: list[list] = [[values[1]] for values in db.get_categories()]
     markup_key: ReplyKeyboardMarkup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     text: str = 'Выберете категорию'
@@ -59,34 +58,14 @@ async def set_category(update: Update, context) -> int:
 
     if update.message.text in categories_names:
         context.user_data['Пользователь']: int = update.message.from_user.id
-        text: str = 'Введите сумму'
-        await update.message.reply_text(text)
-        await context.bot.delete_message(user_id, message_id)
-        await context.bot.delete_message(user_id, message_id - 1)
-        return PRICE
-    else:
-        await context.bot.delete_message(user_id, message_id - 1)
-        await add(update, context)
-
-
-async def set_price(update: Update, context) -> int:
-    """Получает сумму, записывает в контекст, переводит на комментарий"""
-    user_id = update.message.from_user.id
-    message_id = update.message.message_id
-
-    try:
-        context.user_data['Сумма']: float = float(update.message.text)
         text: str = 'Введите комментарий или /skip, для пропуска'
         await update.message.reply_text(text)
         await context.bot.delete_message(user_id, message_id)
         await context.bot.delete_message(user_id, message_id - 1)
-
         return COMMENT
-    except Exception:
-        text: str = 'Сумма должна быть цифрой!'
-        await update.message.reply_text(text)
-        await context.bot.delete_message(user_id, message_id)
+    else:
         await context.bot.delete_message(user_id, message_id - 1)
+        await add(update, context)
 
 
 async def set_comment(update: Update, context):
