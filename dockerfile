@@ -10,10 +10,11 @@ WORKDIR /usr/src/app/Finance_bot
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY main.py ./
-COPY new_func.py ./
+COPY Functions.py ./
 COPY Keyboards.py ./
-COPY handlers.py ./
-COPY datab.py ./
-COPY Create_table.py ./
+COPY Handlers.py ./
+COPY DataBase.py ./
+COPY Tables.py ./
+COPY Settings.py ./
 RUN mkdir workdir
 CMD ["python", "./main.py"]

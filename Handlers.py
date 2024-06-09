@@ -10,7 +10,7 @@ import Functions as func
 
 handlers = [
     ConversationHandler(
-        entry_points=[MessageHandler(filters.ALL, func.add)],
+        entry_points=[MessageHandler(~filters.COMMAND, func.add)],
         states={
             func.CATEGORY: [MessageHandler(~filters.COMMAND, func.set_category)],
             func.COMMENT: [
